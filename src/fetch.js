@@ -46,16 +46,14 @@ export const getFollowUpPrompt = (conversation, description) => {
 };
 
 export const fetchNutritionData = async ({ apiKey, messages }) => {
-  console.log(messages)
-
-  // mock
-  return `{
-    "rice": {"calories": {"amount": 103.0, "percentage": 5.15}, "carbohydrate": {"amount": 22.5, "percentage": 7.5}, "protein": {"amount": 2.1, "percentage": 4.2}, "dietary fiber": {"amount": 0.3, "percentage": 1.0}},
-    "beef tongue": {"calories": {"amount": 244.5, "percentage": 12.23}, "carbohydrate": {"amount": 0.0, "percentage": 0.0}, "protein": {"amount": 29.25, "percentage": 58.5}, "dietary fiber": {"amount": 0.0, "percentage": 0.0}},
-    "vegetable oil": {"calories": {"amount": 120.0, "percentage": 6.0}, "carbohydrate": {"amount": 0.0, "percentage": 0.0}, "protein": {"amount": 0.0, "percentage": 0.0}, "dietary fiber": {"amount": 0.0, "percentage": 0.0}},
-    "bok choy": {"calories": {"amount": 10.0, "percentage": 0.5}, "carbohydrate": {"amount": 1.5, "percentage": 0.5}, "protein": {"amount": 1.0, "percentage": 2.0}, "dietary fiber": {"amount": 0.7, "percentage": 2.3}},
-    "total": {"calories": {"amount": 477.5, "percentage": 23.88}, "carbohydrate": {"amount": 24.0, "percentage": 8.0}, "protein": {"amount": 32.35, "percentage": 64.7}, "dietary fiber": {"amount": 1.0, "percentage": 3.3}}
-  }`;
+  // uncomment to mock openai api call to test other components
+  // return `{
+  //   "rice": {"calories": {"amount": 103.0, "percentage": 5.15}, "carbohydrate": {"amount": 22.5, "percentage": 7.5}, "protein": {"amount": 2.1, "percentage": 4.2}, "dietary fiber": {"amount": 0.3, "percentage": 1.0}},
+  //   "beef tongue": {"calories": {"amount": 244.5, "percentage": 12.23}, "carbohydrate": {"amount": 0.0, "percentage": 0.0}, "protein": {"amount": 29.25, "percentage": 58.5}, "dietary fiber": {"amount": 0.0, "percentage": 0.0}},
+  //   "vegetable oil": {"calories": {"amount": 120.0, "percentage": 6.0}, "carbohydrate": {"amount": 0.0, "percentage": 0.0}, "protein": {"amount": 0.0, "percentage": 0.0}, "dietary fiber": {"amount": 0.0, "percentage": 0.0}},
+  //   "bok choy": {"calories": {"amount": 10.0, "percentage": 0.5}, "carbohydrate": {"amount": 1.5, "percentage": 0.5}, "protein": {"amount": 1.0, "percentage": 2.0}, "dietary fiber": {"amount": 0.7, "percentage": 2.3}},
+  //   "total": {"calories": {"amount": 477.5, "percentage": 23.88}, "carbohydrate": {"amount": 24.0, "percentage": 8.0}, "protein": {"amount": 32.35, "percentage": 64.7}, "dietary fiber": {"amount": 1.0, "percentage": 3.3}}
+  // }`;
 
   const response = await axios.post(
     'https://api.openai.com/v1/chat/completions',
@@ -72,7 +70,7 @@ export const fetchNutritionData = async ({ apiKey, messages }) => {
       }
     }
   );
-  console.log(response)
+
   return response.data.choices[0].message.content;
   // return JSON.parse(response.data.choices[0].message.content);
 };

@@ -24,7 +24,6 @@ ChartJS.register(
 
 
 const NutritionTable = ({ data }) => {
-  console.log(data)
   data = JSON.parse(data)
   // Function to render table headers
   const renderTableHeader = () => {

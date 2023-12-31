@@ -8,9 +8,7 @@ const NutritionFetcher = () => {
   const [apiKey, setApiKey] = useState(localStorage.getItem('apiKey') || '');
   const [description, setDescription] = useState('');
   
-  // const [followUpInput, setFollowUpInput] = useState('');
   const [conversation, setConversation] = useState([]);
-  // const [isSubmittedOnce, setIsSubmittedOnce] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -30,11 +28,9 @@ const NutritionFetcher = () => {
 
     setError(null);
     setLoading(true);
-    // setNutritionData('');
     
     try {
       const messages = conversation.length == 0 ? getInitialPrompt(description) : getFollowUpPrompt(conversation, description);
-      console.log(messages)
       const response = await fetchNutritionData({ apiKey, messages });
       setLoading(false);
 
@@ -43,8 +39,6 @@ const NutritionFetcher = () => {
         { role: "assistant", content: response }
       ])
       setDescription('')
-      // const newConversation = [prompt, response];
-      // newConversation[index].output = textOutput;
 
     } catch (err) {
       setLoading(false);
@@ -52,20 +46,11 @@ const NutritionFetcher = () => {
     }
   };
 
-  // const handleChange = (value, index) => {
-  //   const newConversation = [...conversation];
-  //   newConversation[index].input = value;
-  //   setConversation(newConversation);
-  // }
-
   const renderConversation = () => {
     return conversation.filter((item) => item?.role == 'user').map((entry, index) => (
       <Card key={index} className="mb-2">
         <Card.Body>
           <Card.Text>{entry.content}</Card.Text>
-            
-          {/* <Card.Text>Output:</Card.Text>
-          <pre>{entry.output}</pre> */}
         </Card.Body>
       </Card>
     ));
