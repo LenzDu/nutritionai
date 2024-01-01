@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Form, Container, Row, Col, Card, Table } from 'react-bootstrap';
 
 import { fetchNutritionData, getInitialPrompt, getFollowUpPrompt } from './fetch';
-import { NutritionDataAndError } from './components/data-display';
+import { DataDisplay, ErrorDisplay } from './components/data-display';
 import ApiPopupModal from './components/api-modal'
 import NavbarComponent from './components/nav-bar'
 
@@ -116,7 +116,10 @@ const NutritionFetcher = () => {
               </Card.Body>
             </Card>
 
-            <NutritionDataAndError nutritionData={conversation[conversation.length - 1]?.content} error={error} />
+            <hr></hr>
+
+            <DataDisplay nutritionData={conversation[conversation.length - 1]?.content} />
+            <ErrorDisplay error={error} />
           </Col>
         </Row>
       </Container>

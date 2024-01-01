@@ -24,7 +24,6 @@ ChartJS.register(
 
 
 const NutritionTable = ({ data }) => {
-  data = JSON.parse(data)
   // Function to render table headers
   const renderTableHeader = () => {
     const headers = Object.keys(data).filter(key => key !== 'total');
@@ -81,8 +80,6 @@ const NutritionTable = ({ data }) => {
 };
 
 const NutritionBarPlot = ({ data }) => {
-  data = JSON.parse(data);
-
   // Exclude 'total' when we're plotting
   const foodItems = Object.keys(data).filter(key => key !== 'total');
 
@@ -133,15 +130,42 @@ const NutritionBarPlot = ({ data }) => {
   return <Bar data={chartData} options={chartOptions} />;
 };
 
-export const NutritionDataAndError = ({ nutritionData, error }) => {
+const FoodSummary = ({ data }) => {
   return (
     <>
-      {nutritionData && (
-        <Card.Text className="mt-3">
-          <NutritionTable data={nutritionData} />
-          <NutritionBarPlot data={nutritionData} />
-        </Card.Text>
-      )}
+      <strong>Food Breakdown</strong>
+      <div className="compact-list">
+        <ul>
+          {Object.entries(data).map(([foodItem, description], index) => (
+            <li key={index}>
+              <strong>{foodItem}:</strong> {description}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
+  );
+};
+
+export const DataDisplay = ({ nutritionData }) => {
+  if (!nutritionData) return null;
+
+  const data = JSON.parse(nutritionData)
+
+  return (
+    // <Card.Text className="mt-3">
+    <>
+      <FoodSummary data={data.food_summary} />
+      <NutritionTable data={data.nutrition_breakdown} />
+      <NutritionBarPlot data={data.nutrition_breakdown} />
+    </>
+    // </Card.Text>
+  );
+};
+
+export const ErrorDisplay = ({ error }) => {
+  return (
+    <>
       {error && (
         <Card.Text className="text-danger">
           Error: {error}
