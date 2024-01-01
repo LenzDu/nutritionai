@@ -7,15 +7,13 @@ function NavbarComponent({ setShowModal }) {
   };
 
   return (
-    <Navbar bg='dark' variant="dark">
+    <Navbar collapseOnSelect='true' expand={false} bg='dark' variant="dark">
       <Container>
         <Navbar.Brand>Nutritionai</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ms-auto">
-            <NavDropdown title="Menu" id="basic-nav-dropdown">
-              <NavDropdown.Item onClick={handleAPIClick}>API</NavDropdown.Item>
-            </NavDropdown>
+          <Nav className="me-auto">
+            <Nav.Link eventKey='1' onClick={handleAPIClick}>API Key</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>
