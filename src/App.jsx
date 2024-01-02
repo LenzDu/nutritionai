@@ -137,8 +137,6 @@ const NutritionFetcher = () => {
               </Card.Body>
             </Card>
 
-            <hr></hr>
-
             <DataDisplay nutritionData={conversation[conversation.length - 1]?.content} />
             <ErrorDisplay error={error} />
           </Col>

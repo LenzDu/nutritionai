@@ -188,6 +188,7 @@ export const DataDisplay = ({ nutritionData }) => {
 
   return (
     <>
+      <hr></hr>
       <strong>Food Breakdown</strong>
       <FoodSummary data={data.food_summary} />
       <strong>Nutrients Breakdown</strong>
