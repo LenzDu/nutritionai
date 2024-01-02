@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Form, Container, Row, Col, Card, Table } from 'react-bootstrap';
 
-import { fetchNutritionData, getInitialPrompt, getFollowUpPrompt } from './fetch';
+import { fetchNutritionData, getInitialPrompt, getFollowUpPrompt, calcualteCost } from './api';
 import { DataDisplay, ErrorDisplay } from './components/data-display';
 import ApiPopupModal from './components/api-modal'
 import NavbarComponent from './components/nav-bar'
@@ -10,7 +10,8 @@ const NutritionFetcher = () => {
   const [apiKey, setApiKey] = useState(localStorage.getItem('apiKey') || '');
   const [showModal, setShowModal] = useState(!localStorage.getItem('apiKey'));
   const [description, setDescription] = useState('');
-  
+  const [cost, setCost] = useState(0)
+
   const [conversation, setConversation] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -31,22 +32,30 @@ const NutritionFetcher = () => {
 
     setError(null);
     setLoading(true);
-    
+
     try {
       const messages = conversation.length == 0 ? getInitialPrompt(description) : getFollowUpPrompt(conversation, description);
-      const response = await fetchNutritionData({ apiKey, messages });
+      const { message, usage } = await fetchNutritionData({ apiKey, messages });
       setLoading(false);
 
       setConversation([
         ...messages,
-        { role: "assistant", content: response }
+        { role: "assistant", content: message }
       ])
       setDescription('')
+      setCost(cost + calcualteCost(usage))
 
     } catch (err) {
       setLoading(false);
       setError(err.response?.data?.error?.message || `An error occurred while fetching data: ${err}`);
     }
+  };
+  
+  const handleStartOver = () => {
+    setError(null);
+    setDescription('');
+    setConversation([]);
+    setCost(0);
   };
 
   const renderConversation = () => {
@@ -63,7 +72,7 @@ const NutritionFetcher = () => {
   return (
     <>
       <NavbarComponent setShowModal={setShowModal} />
-    
+
       <Container fluid>
         <Row className="justify-content-md-center">
           <Col md={6}>
@@ -81,15 +90,6 @@ const NutritionFetcher = () => {
             <Card>
               <Card.Body>
                 <Form>
-                  {/* <Form.Group className="mb-3">
-                    <Form.Label>OpenAI API Key</Form.Label>
-                    <Form.Control
-                      // type="password"
-                      placeholder="Enter API Key"
-                      value={apiKey}
-                      onChange={(e) => setApiKey(e.target.value)}
-                    />
-                  </Form.Group> */}
 
                   {renderConversation()}
 
@@ -104,14 +104,27 @@ const NutritionFetcher = () => {
                     />
                   </Form.Group>
 
-
                   <Button
+                    className='me-2'
                     variant="primary"
                     onClick={handleSubmit}
                     disabled={loading}
                   >
                     {loading ? 'Loading...' : 'Submit'}
                   </Button>
+
+                  <Button
+                    variant="secondary"
+                    onClick={handleStartOver}
+                    disabled={loading}
+                  >
+                    Start Over
+                  </Button>
+
+                  <div style={{ fontSize: '0.75rem', fontStyle: 'italic', paddingTop: '5px' }}>
+                    Conversation Cost: ${cost.toFixed(3)}
+                  </div>
+
                 </Form>
               </Card.Body>
             </Card>
@@ -122,7 +135,7 @@ const NutritionFetcher = () => {
             <ErrorDisplay error={error} />
           </Col>
         </Row>
-      </Container>
+      </Container >
     </>
   );
 };
