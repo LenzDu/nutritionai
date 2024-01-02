@@ -50,7 +50,7 @@ const NutritionFetcher = () => {
       setError(err.response?.data?.error?.message || `An error occurred while fetching data: ${err}`);
     }
   };
-  
+
   const handleStartOver = () => {
     setError(null);
     setDescription('');
@@ -90,15 +90,19 @@ const NutritionFetcher = () => {
             <Card>
               <Card.Body>
                 <Form>
+                  <Form.Label>Describe Your Meal</Form.Label>
 
                   {renderConversation()}
 
                   <Form.Group className="mb-3">
-                    <Form.Label>Description of Meal</Form.Label>
                     <Form.Control
                       as="textarea"
                       rows={3}
-                      placeholder="What did you eat?"
+                      placeholder={
+                        conversation.length == 0
+                          ? "What did you eat?"
+                          : "Provide more details..."
+                      }
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                     />
@@ -110,7 +114,11 @@ const NutritionFetcher = () => {
                     onClick={handleSubmit}
                     disabled={loading}
                   >
-                    {loading ? 'Loading...' : 'Submit'}
+                    {
+                      loading
+                        ? 'Loading...'
+                        : conversation.length == 0 ? "Get Results" : "Update Results"
+                    }
                   </Button>
 
                   <Button

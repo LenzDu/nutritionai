@@ -68,7 +68,7 @@ const NutritionTable = ({ data }) => {
   const renderTableRow = (foodName, nutrients) => {
     return (
       <tr key={foodName}>
-        <td>{foodName}</td>
+        <td><strong>{foodName}</strong></td>
         {nutritionTypes.map((type) => {
           const amount = nutrients[type] || 0;
           const percentage = calculatePercentage(amount, type);
@@ -102,7 +102,7 @@ const NutritionTable = ({ data }) => {
   };
 
   return (
-    <Table striped bordered hover size="sm" style={tableStyle}>
+    <Table responsive striped bordered hover size="sm" style={tableStyle}>
       {tableHeader}
       {tableBody}
     </Table>
@@ -138,12 +138,12 @@ const NutritionBarPlot = ({ data }) => {
 
   const chartOptions = {
     indexAxis: 'y',
-    // plugins: {
-    //   title: {
-    //     display: true,
-    //     text: 'Nutrition Data',
-    //   },
-    // },
+    plugins: {
+      title: {
+        display: true,
+        text: 'Nutrients Breakdown (% Daily Intake)',
+      },
+    },
     scales: {
       x: {
         stacked: true,
@@ -168,7 +168,6 @@ const NutritionBarPlot = ({ data }) => {
 const FoodSummary = ({ data }) => {
   return (
     <>
-      <strong>Food Breakdown</strong>
       <div className="compact-list">
         <ul>
           {Object.entries(data).map(([foodItem, description], index) => (
@@ -188,13 +187,13 @@ export const DataDisplay = ({ nutritionData }) => {
   const data = JSON.parse(nutritionData)
 
   return (
-    // <Card.Text className="mt-3">
     <>
+      <strong>Food Breakdown</strong>
       <FoodSummary data={data.food_summary} />
+      <strong>Nutrients Breakdown</strong>
       <NutritionTable data={data.nutrition_breakdown} />
       <NutritionBarPlot data={data.nutrition_breakdown} />
     </>
-    // </Card.Text>
   );
 };
 

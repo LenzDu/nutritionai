@@ -82,6 +82,7 @@ export const fetchNutritionData = async ({ apiKey, messages }) => {
       model: "gpt-4-1106-preview",
       response_format: { "type": "json_object" },
       max_tokens: 1000,
+      temperature: 0.8
     },
     {
       headers: {
