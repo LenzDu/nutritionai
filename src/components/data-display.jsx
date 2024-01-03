@@ -3,6 +3,7 @@ import { Button, Form, Container, Row, Col, Card, Table } from 'react-bootstrap'
 import { Bar } from 'react-chartjs-2';
 
 import { dailyValue } from '../reference-data';
+import SaveData from './save-data'
 
 import {
   Chart as ChartJS,
@@ -30,16 +31,19 @@ const calculatePercentage = (amount, nutrient) => {
   return (amount / recommendedAmount) * 100;
 };
 
-const calculateTotalNutrients = (data, nutrientTypes) => {
+const calculateTotalNutrients = (data) => {
+  const firstFoodItemKey = Object.keys(data).find(key => key !== 'total');
+  const nutritionTypes = firstFoodItemKey ? Object.keys(data[firstFoodItemKey]) : [];
+
   // Initialize an object to store total amounts for each nutrient
-  let totals = nutrientTypes.reduce((acc, nutrient) => {
+  let totals = nutritionTypes.reduce((acc, nutrient) => {
     acc[nutrient] = 0;
     return acc;
   }, {});
 
   // Sum up all the amounts for each nutrient
   Object.values(data).filter(foodData => foodData !== data.total).forEach(foodData => {
-    nutrientTypes.forEach(nutrient => {
+    nutritionTypes.forEach(nutrient => {
       totals[nutrient] += foodData[nutrient] || 0;
     });
   });
@@ -84,7 +88,7 @@ const NutritionTable = ({ data }) => {
 
   // Function to calculate the total nutrients and render the total row
   const renderTotalRow = () => {
-    const totals = calculateTotalNutrients(data, nutritionTypes);
+    const totals = calculateTotalNutrients(data);
     return renderTableRow('Total', totals);
   };
 
@@ -110,7 +114,7 @@ const NutritionTable = ({ data }) => {
 };
 
 const NutritionBarPlot = ({ data }) => {
-  const foodItems = Object.keys(data).filter(key => key !== 'total');
+  const foodItems = Object.keys(data);
 
   const datasets = foodItems.map((item, index) => {
     const color = `hsl(${index * 360 / foodItems.length}, 70%, 60%)`;
@@ -159,10 +163,14 @@ const NutritionBarPlot = ({ data }) => {
           // suggestedMax: 100,
         }
       }
-    }
+    },
+    responsive: true,
+    maintainAspectRatio: false,
   };
 
-  return <Bar data={chartData} options={chartOptions} />;
+  return <div style={{ height: '40vh', minHeight: '200px' }}>
+    <Bar data={chartData} options={chartOptions} />
+  </div>
 };
 
 const FoodSummary = ({ data }) => {
@@ -184,7 +192,8 @@ const FoodSummary = ({ data }) => {
 export const DataDisplay = ({ nutritionData }) => {
   if (!nutritionData) return null;
 
-  const data = JSON.parse(nutritionData)
+  const data = JSON.parse(nutritionData);
+  const totals = calculateTotalNutrients(data.nutrition_breakdown);
 
   return (
     <>
@@ -194,6 +203,8 @@ export const DataDisplay = ({ nutritionData }) => {
       <strong>Nutrients Breakdown</strong>
       <NutritionTable data={data.nutrition_breakdown} />
       <NutritionBarPlot data={data.nutrition_breakdown} />
+
+      <SaveData data={totals} />
     </>
   );
 };

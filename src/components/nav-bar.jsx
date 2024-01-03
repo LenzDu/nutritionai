@@ -1,9 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { Navbar, Nav, NavDropdown, Container } from 'react-bootstrap';
 
-function NavbarComponent({ setShowModal }) {
+function NavbarComponent({ setShowApiModal }) {
   const handleAPIClick = () => {
-    setShowModal(true);
+    setShowApiModal(true);
   };
 
   return (
