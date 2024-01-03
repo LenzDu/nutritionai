@@ -59,20 +59,20 @@ export const getFollowUpPrompt = (conversation, description) => {
 
 export const fetchNutritionData = async ({ apiKey, messages }) => {
   // uncomment to mock openai api call to test other components
-  return {
-    message: `{
-      "food_summary": {"big mac": "one big mac burger from McDonald\'s", "medium fries": "assuming the big mac meal comes with a medium serving of McDonald\'s fries", "medium coke": "assuming the big mac meal comes with a medium 21 oz Coca-Cola"},
-      "nutrition_breakdown": {
-        "big mac": {"calories": 563, "protein": 26, "saturated_fat": 10, "total_fat": 33, "carbohydrate": 46, "dietary_fiber": 3},
-        "medium fries": {"calories": 340, "protein": 4, "saturated_fat": 3.5, "total_fat": 16, "carbohydrate": 44, "dietary_fiber": 4},
-        "medium coke": {"calories": 200, "protein": 0, "saturated_fat": 0, "total_fat": 0, "carbohydrate": 55, "dietary_fiber": 0}}}
-    `,
-    usage: {
-      'prompt_tokens': 649,
-      'completion_tokens': 323,
-      'total_tokens': 972
-    }
-  };
+  // return {
+  //   message: `{
+  //     "food_summary": {"big mac": "one big mac burger from McDonald\'s", "medium fries": "assuming the big mac meal comes with a medium serving of McDonald\'s fries", "medium coke": "assuming the big mac meal comes with a medium 21 oz Coca-Cola"},
+  //     "nutrition_breakdown": {
+  //       "big mac": {"calories": 563, "protein": 26, "saturated_fat": 10, "total_fat": 33, "carbohydrate": 46, "dietary_fiber": 3},
+  //       "medium fries": {"calories": 340, "protein": 4, "saturated_fat": 3.5, "total_fat": 16, "carbohydrate": 44, "dietary_fiber": 4},
+  //       "medium coke": {"calories": 200, "protein": 0, "saturated_fat": 0, "total_fat": 0, "carbohydrate": 55, "dietary_fiber": 0}}}
+  //   `,
+  //   usage: {
+  //     'prompt_tokens': 649,
+  //     'completion_tokens': 323,
+  //     'total_tokens': 972
+  //   }
+  // };
 
   const response = await axios.post(
     'https://api.openai.com/v1/chat/completions',

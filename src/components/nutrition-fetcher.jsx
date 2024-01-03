@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Form, Container, Row, Col, Card, Table } from 'react-bootstrap';
 
-import { fetchNutritionData, getInitialPrompt, getFollowUpPrompt, calcualteCost } from './api';
-import { DataDisplay, ErrorDisplay } from './components/data-display';
-import ApiPopupModal from './components/api-modal'
-import NavbarComponent from './components/nav-bar'
-import SaveData from './components/save-data';
+import { fetchNutritionData, getInitialPrompt, getFollowUpPrompt, calcualteCost } from '../api';
+import { DataDisplay, ErrorDisplay } from './data-display';
+import ApiPopupModal from './api-modal'
 
 const NutritionFetcher = () => {
   const [apiKey, setApiKey] = useState(localStorage.getItem('apiKey') || '');
@@ -64,7 +62,7 @@ const NutritionFetcher = () => {
 
   return (
     <>
-      <NavbarComponent setShowApiModal={setShowApiModal} />
+      {/* <NavbarComponent setShowApiModal={setShowApiModal} /> */}
 
       <Container fluid>
         <Row className="justify-content-md-center">
@@ -137,8 +135,4 @@ const NutritionFetcher = () => {
   );
 };
 
-const App = () => (
-  <NutritionFetcher />
-);
-
-export default App;
+export default NutritionFetcher
