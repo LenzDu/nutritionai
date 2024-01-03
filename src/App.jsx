@@ -7,7 +7,7 @@ import NutritionFetcher from'./components/nutrition-fetcher';
 import History from './components/history';
 
 const App = () => (
-    <Router>
+    <Router basename={process.env.PUBLIC_URL}>
       <NavbarComponent />
       <Container>
         <Routes>
