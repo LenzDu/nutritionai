@@ -42,7 +42,7 @@ const calculateTotalNutrients = (data) => {
   }, {});
 
   // Sum up all the amounts for each nutrient
-  Object.values(data).filter(foodData => foodData !== data.total).forEach(foodData => {
+  Object.values(data).forEach(foodData => {
     nutritionTypes.forEach(nutrient => {
       totals[nutrient] += foodData[nutrient] || 0;
     });

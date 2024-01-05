@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 
+const getLocalDateISOString = () => {
+  const now = new Date();
+  const timeOffsetInMS = now.getTimezoneOffset() * 60000; // convert offset to milliseconds
+  const adjustedDate = new Date(now - timeOffsetInMS);
+  return adjustedDate.toISOString().substr(0, 10); // format to yyyy-mm-dd
+};
+
 const SaveDataModal = ({ show, setShow, data }) => {
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().substr(0, 10)); // yyyy-mm-dd
+  const [selectedDate, setSelectedDate] = useState(getLocalDateISOString()); 
   const [error, setError] = useState(null);
 
   if (!data) return null;
@@ -15,7 +22,7 @@ const SaveDataModal = ({ show, setShow, data }) => {
       existingData.data.nutrients[selectedDate] = data;
 
       localStorage.setItem('history', JSON.stringify(existingData));
-      alert('Data saved correctly!');
+      alert('Results saved!');
       setShow(false);
     } catch (e) {
       setError('An error occurred while saving data.');
@@ -30,11 +37,13 @@ const SaveDataModal = ({ show, setShow, data }) => {
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Save Data</Modal.Title>
+        <Modal.Title>Save Results</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {error && <Alert variant="danger">{error}</Alert>}
-        <p>Add data</p>
+        <p>
+          Results will be saved on your device for the day you select. You can see all results in the history page.
+        </p>
         <Form>
           <Form.Group>
             <Form.Label>Date:</Form.Label>

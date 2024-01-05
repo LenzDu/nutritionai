@@ -1,19 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form, Container, Row, Col, Card, Table } from 'react-bootstrap';
+import { Button, Form, Container, Row, Col, Card } from 'react-bootstrap';
 
 import { fetchNutritionData, getInitialPrompt, getFollowUpPrompt, calcualteCost } from '../api';
-import { DataDisplay, ErrorDisplay } from './data-display';
-import ApiPopupModal from './api-modal'
+import { DataDisplay, ErrorDisplay } from '../components/data-display';
 
-const NutritionFetcher = () => {
-  const [apiKey, setApiKey] = useState(localStorage.getItem('apiKey') || '');
-  const [showApiModal, setShowApiModal] = useState(!localStorage.getItem('apiKey'));
+const NutritionFetcher = ( { apiKey } ) => {
   const [description, setDescription] = useState('');
   const [cost, setCost] = useState(0)
 
   const [conversation, setConversation] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  function handleBeforeUnload(event) {
+    event.returnValue = 'Changes you made may not be saved.';
+  }
+  useEffect(() => {
+    // Add the event listener
+    if ( description || conversation.length > 0 ) {
+      window.addEventListener('beforeunload', handleBeforeUnload);
+    }
+
+    // Remove the event listener on cleanup
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [conversation, description, handleBeforeUnload]); // Empty array ensures this effect only runs once
 
   const handleSubmit = async () => {
     if (!apiKey || !description) {
@@ -25,7 +37,7 @@ const NutritionFetcher = () => {
     setLoading(true);
 
     try {
-      const messages = conversation.length == 0 ? getInitialPrompt(description) : getFollowUpPrompt(conversation, description);
+      const messages = conversation.length === 0 ? getInitialPrompt(description) : getFollowUpPrompt(conversation, description);
       const { message, usage } = await fetchNutritionData({ apiKey, messages });
       setLoading(false);
 
@@ -50,7 +62,7 @@ const NutritionFetcher = () => {
   };
 
   const renderConversation = () => {
-    return conversation.filter((item) => item?.role == 'user').map((entry, index) => (
+    return conversation.filter((item) => item?.role === 'user').map((entry, index) => (
       <Card key={index} className="mb-2">
         <Card.Body>
           <Card.Text>{entry.content}</Card.Text>
@@ -68,13 +80,6 @@ const NutritionFetcher = () => {
         <Row className="justify-content-md-center">
           <Col md={6}>
 
-            <ApiPopupModal
-              apiKey={apiKey}
-              setApiKey={setApiKey}
-              showApiModal={showApiModal}
-              setShowApiModal={setShowApiModal}
-            />
-
             <Card>
               <Card.Body>
                 <Form>
@@ -87,7 +92,7 @@ const NutritionFetcher = () => {
                       as="textarea"
                       rows={3}
                       placeholder={
-                        conversation.length == 0
+                        conversation.length === 0
                           ? "What did you eat?"
                           : "Provide more details..."
                       }
@@ -105,7 +110,7 @@ const NutritionFetcher = () => {
                     {
                       loading
                         ? 'Loading...'
-                        : conversation.length == 0 ? "Get Results" : "Update Results"
+                        : conversation.length === 0 ? "Get Results" : "Update Results"
                     }
                   </Button>
 
@@ -113,7 +118,7 @@ const NutritionFetcher = () => {
                     variant="secondary"
                     onClick={handleStartOver}
                     disabled={loading}
-                    hidden={conversation.length == 0}
+                    hidden={conversation.length === 0}
                   >
                     Start Over
                   </Button>
