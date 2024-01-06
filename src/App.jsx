@@ -4,8 +4,8 @@ import { Container } from 'react-bootstrap';
 
 import NavbarComponent from './components/nav-bar';
 import ApiPopupModal from './components/api-modal';
-import History from './pages/history';
-import NutritionFetcher from './pages/nutrition-fetcher';
+import History from './components/history';
+import NutritionFetcher from './components/nutrition-fetcher';
 
 const App = () => {
   const [apiKey, setApiKey] = useState(localStorage.getItem('apiKey') || '');

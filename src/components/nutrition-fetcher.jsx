@@ -2,30 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { Button, Form, Container, Row, Col, Card } from 'react-bootstrap';
 
 import { fetchNutritionData, getInitialPrompt, getFollowUpPrompt, calcualteCost } from '../api';
-import { DataDisplay, ErrorDisplay } from '../components/data-display';
+import { DataDisplay, ErrorDisplay } from './data-display';
+
+const setSessionState = (key, value, setter) => {
+  setter(value)
+  sessionStorage.setItem(key, JSON.stringify(value))
+};
+
+const getSessionState = (key) => {
+  const data = sessionStorage.getItem(key)
+  return JSON.parse(data)
+};
 
 const NutritionFetcher = ( { apiKey } ) => {
-  const [description, setDescription] = useState('');
-  const [cost, setCost] = useState(0)
+  const [description, setDescription] = useState(getSessionState('description') || '');
+  const [cost, setCost] = useState(getSessionState('cost') || 0);
 
-  const [conversation, setConversation] = useState([]);
+  const [conversation, setConversation] = useState(getSessionState('conversation') || []);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  function handleBeforeUnload(event) {
-    event.returnValue = 'Changes you made may not be saved.';
-  }
-  useEffect(() => {
-    // Add the event listener
-    if ( description || conversation.length > 0 ) {
-      window.addEventListener('beforeunload', handleBeforeUnload);
-    }
-
-    // Remove the event listener on cleanup
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [conversation, description, handleBeforeUnload]); // Empty array ensures this effect only runs once
 
   const handleSubmit = async () => {
     if (!apiKey || !description) {
@@ -41,12 +36,12 @@ const NutritionFetcher = ( { apiKey } ) => {
       const { message, usage } = await fetchNutritionData({ apiKey, messages });
       setLoading(false);
 
-      setConversation([
+      setSessionState('conversation', [
         ...messages,
         { role: "assistant", content: message }
-      ])
-      setDescription('')
-      setCost(cost + calcualteCost(usage))
+      ], setConversation)
+      setSessionState('description', '', setDescription);
+      setSessionState('cost', cost + calcualteCost(usage), setCost)
 
     } catch (err) {
       setLoading(false);
@@ -56,9 +51,9 @@ const NutritionFetcher = ( { apiKey } ) => {
 
   const handleStartOver = () => {
     setError(null);
-    setDescription('');
-    setConversation([]);
-    setCost(0);
+    setSessionState('description', '', setDescription);
+    setSessionState('conversation', [], setConversation);
+    setSessionState('cost', 0, setCost)
   };
 
   const renderConversation = () => {
@@ -74,8 +69,6 @@ const NutritionFetcher = ( { apiKey } ) => {
 
   return (
     <>
-      {/* <NavbarComponent setShowApiModal={setShowApiModal} /> */}
-
       <Container fluid>
         <Row className="justify-content-md-center">
           <Col md={6}>
@@ -97,7 +90,7 @@ const NutritionFetcher = ( { apiKey } ) => {
                           : "Provide more details..."
                       }
                       value={description}
-                      onChange={(e) => setDescription(e.target.value)}
+                      onChange={(e) => setSessionState('description', e.target.value, setDescription)}
                     />
                   </Form.Group>
 
