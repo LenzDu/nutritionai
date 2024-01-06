@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Button, Form, Container, Row, Col, Card, Table } from 'react-bootstrap';
 import { Bar } from 'react-chartjs-2';
 
-import { dailyValue } from '../reference-data';
+import { calculatePercentage, calculateTotalNutrients } from '../calculate';
+import NutrientCardsContainer from './nutrient-cards';
 import SaveData from './save-data'
 
 import {
@@ -25,31 +26,6 @@ ChartJS.register(
   Legend
 );
 
-// Define a function to calculate the percentage
-const calculatePercentage = (amount, nutrient) => {
-  const recommendedAmount = dailyValue[nutrient];
-  return (amount / recommendedAmount) * 100;
-};
-
-const calculateTotalNutrients = (data) => {
-  const firstFoodItemKey = Object.keys(data).find(key => key !== 'total');
-  const nutritionTypes = firstFoodItemKey ? Object.keys(data[firstFoodItemKey]) : [];
-
-  // Initialize an object to store total amounts for each nutrient
-  let totals = nutritionTypes.reduce((acc, nutrient) => {
-    acc[nutrient] = 0;
-    return acc;
-  }, {});
-
-  // Sum up all the amounts for each nutrient
-  Object.values(data).forEach(foodData => {
-    nutritionTypes.forEach(nutrient => {
-      totals[nutrient] += foodData[nutrient] || 0;
-    });
-  });
-
-  return totals;
-};
 
 const NutritionTable = ({ data }) => {
   const firstFoodItemKey = Object.keys(data).find(key => key !== 'total');
@@ -201,7 +177,8 @@ export const DataDisplay = ({ nutritionData }) => {
       <strong>Food Breakdown</strong>
       <FoodSummary data={data.food_summary} />
       <strong>Nutrients Breakdown</strong>
-      <NutritionTable data={data.nutrition_breakdown} />
+      <NutrientCardsContainer data={data.nutrition_breakdown} />
+      {/* <NutritionTable data={data.nutrition_breakdown} /> */}
       <NutritionBarPlot data={data.nutrition_breakdown} />
 
       <SaveData data={totals} />
