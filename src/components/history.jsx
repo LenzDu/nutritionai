@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Table, Card, Form } from 'react-bootstrap';
+import { Table, Card, Container, Form, Row, Col } from 'react-bootstrap';
 import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, registerables } from 'chart.js';
+import annotationPlugin from 'chartjs-plugin-annotation';
+import { dailyValue } from '../reference-data';
+import { calculatePercentage } from '../calculate';
+import { subDays, format } from 'date-fns';
 
-const History = () => {
-  const [nutrientData, setNutrientData] = useState({});
-  const [selectedNutrient, setSelectedNutrient] = useState('calories');
+ChartJS.register(...registerables);
 
-  // Load data from localStorage on component mount
-  useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem('history'));
-    setNutrientData(storedData ? storedData.data.nutrients : {});
-  }, []);
+const NutrientChart = ({ nutrientData, selectedNutrient }) => {
+  const datesSorted = Object.keys(nutrientData).sort();
 
-  // Prepare data for chart
   const chartData = {
-    labels: Object.keys(nutrientData),
+    labels: datesSorted,
     datasets: [
       {
         label: selectedNutrient,
-        data: Object.values(nutrientData).map(data => data[selectedNutrient]),
+        data: datesSorted.map(date => nutrientData[date][selectedNutrient]),
         backgroundColor: 'rgba(54, 162, 235, 0.6)',
         borderColor: 'rgba(54, 162, 235, 1)',
         borderWidth: 1,
@@ -26,58 +25,210 @@ const History = () => {
     ],
   };
 
-  // Handle changes to the nutrient select dropdown
+  const maxValue = Math.max(
+    ...Object.values(nutrientData).map(data => data[selectedNutrient]),
+    dailyValue[selectedNutrient]
+  );
+
+  const options = {
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: maxValue * 1.1,
+      },
+      x: {
+        grid: {
+          display: false,
+        },
+      },
+    },
+    plugins: {
+      annotation: {
+        annotations: {
+          line1: {
+            type: 'line',
+            yMin: dailyValue[selectedNutrient],
+            yMax: dailyValue[selectedNutrient],
+            // borderColor: 'rgb(255, 99, 132)',
+            borderWidth: 1.5,
+            borderDash: [10, 10],
+            label: {
+              content: 'Daily Recommended',
+              enabled: true,
+              position: 'start',
+            },
+          },
+        }
+      },
+      legend: {
+        display: false,
+      },
+    }
+  };
+
+  ChartJS.register(annotationPlugin);
+
+  return <Bar data={chartData} options={options} />;
+};
+
+
+const NutrientTable = ({ nutrientData, selectedNutrient }) => {
+  const datesSorted = Object.keys(nutrientData).sort();
+
+  return (
+    <Table striped bordered hover className="mt-4">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>{selectedNutrient.charAt(0).toUpperCase() + selectedNutrient.slice(1)}</th>
+          <th>Percentage</th>
+        </tr>
+      </thead>
+      <tbody>
+        {datesSorted.map(date => {
+          const amount = nutrientData[date][selectedNutrient];
+          return (
+            <tr key={date}>
+              <td>{date}</td>
+              <td>{amount}</td>
+              <td>{calculatePercentage(amount, selectedNutrient).toFixed(2)}%</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </Table>
+  );
+};
+
+
+const StatCards = ({ nutrientData, selectedNutrient }) => {
+  // Assuming that the sortedDates has already been created in the parent component, pass it via props.
+  // For simplicity, otherwise you should sort the dates again here.
+
+  // Get the dates for the last 7 days and the 7 days before that
+  const sortedDates = Object.keys(nutrientData).sort();
+  const current7Days = sortedDates.slice(-7); // Last 7 days
+  const previous7Days = sortedDates.slice(-14, -7); // 7 days before the last 7 days
+
+  const sum = (values) => values.reduce((a, b) => a + b, 0);
+
+  const getAverage = (dates) => {
+    const sumOfNutrient = sum(dates.map(date => nutrientData[date][selectedNutrient]));
+    return sumOfNutrient / dates.length;
+  };
+
+  const averageCurrent = getAverage(current7Days);
+  const averagePrevious = getAverage(previous7Days);
+
+  const percentageIncrease =
+    averagePrevious === 0 ? 0 : (((averageCurrent - averagePrevious) / averagePrevious) * 100).toFixed(2);
+
+  return (
+    <div className="stat-cards">
+      <Card bsPrefix="metric-card">
+        <Card.Body>
+          <Card.Title>Average for Current 7 Days</Card.Title>
+          <Card.Text>
+            {averageCurrent.toFixed(2)} ( {calculatePercentage(averageCurrent, selectedNutrient).toFixed(1)}% of daily value)
+          </Card.Text>
+        </Card.Body>
+      </Card>
+      <Card bsPrefix="metric-card">
+        <Card.Body>
+          <Card.Title>% Increase/Decrease</Card.Title>
+          <Card.Text>
+            {percentageIncrease}%
+          </Card.Text>
+        </Card.Body>
+      </Card>
+      {/* More cards for other stats can be added here */}
+    </div>
+  );
+};
+
+const CalendarView = ({ nutrientData, selectedNutrient }) => {
+  const startDate = subDays(new Date(), 27); // 28 days including today
+  const calendarDays = Array.from({ length: 28 }).map((_, i) => {
+    return format(subDays(startDate, -i), 'yyyy-MM-dd');
+  });
+
+  return (
+    <div className="calendar-grid">
+      {calendarDays.map(date => {
+        const percentage = nutrientData[date] ?
+          `${calculatePercentage(nutrientData[date][selectedNutrient], selectedNutrient).toFixed(1)}%` :
+          '';
+
+        const cellClass = nutrientData[date] ? 'filled' : 'empty';
+
+        return (
+          <div key={date} className={`calendar-cell ${cellClass}`}>
+            <span className="cell-date">{format(new Date(date), 'iii')}</span>
+            <span className="cell-data">{percentage}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+
+const History = () => {
+  const [nutrientData, setNutrientData] = useState({});
+  const [selectedNutrient, setSelectedNutrient] = useState('calories');
+
+  useEffect(() => {
+    // Assuming the new structure matches with the Nutrient components
+    const storedData = JSON.parse(localStorage.getItem('history'));
+    if (storedData && storedData.data && storedData.data.nutrients) {
+      const sortedNutrientData = {};
+      Object.keys(storedData.data.nutrients)
+        .sort()
+        .forEach((key) => {
+          sortedNutrientData[key] = storedData.data.nutrients[key];
+        });
+      setNutrientData(sortedNutrientData);
+    }
+  }, []);
+
   const handleNutrientChange = (event) => {
     setSelectedNutrient(event.target.value);
   };
 
-  // Render the component
   return (
     <Container>
-      <Card>
+      <Card className="my-4">
         <Card.Header>
           <h4>Nutrition Consumption History</h4>
-          <Form.Select aria-label="Select nutrient" onChange={handleNutrientChange}>
-            <option value="calories">Calories</option>
-            <option value="protein">Protein</option>
-            <option value="saturated_fat">Saturated Fat</option>
-            <option value="total_fat">Total Fat</option>
-            <option value="carbohydrate">Carbohydrate</option>
-            <option value="dietary_fiber">Dietary Fiber</option>
-          </Form.Select>
         </Card.Header>
         <Card.Body>
-          <Bar data={chartData} />
+          <Form.Group controlId="nutrientSelect">
+            <Form.Label>Select Nutrient</Form.Label>
+            <Form.Select aria-label="Select nutrient" onChange={handleNutrientChange} value={selectedNutrient}>
+              <option value="calories">Calories</option>
+              <option value="protein">Protein</option>
+              <option value="saturated_fat">Saturated Fat</option>
+              <option value="total_fat">Total Fat</option>
+              <option value="carbohydrate">Carbohydrate</option>
+              <option value="dietary_fiber">Dietary Fiber</option>
+            </Form.Select>
+          </Form.Group>
         </Card.Body>
       </Card>
-      <Table striped bordered hover className="mt-4">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Calories</th>
-            <th>Protein</th>
-            <th>Saturated Fat</th>
-            <th>Total Fat</th>
-            <th>Carbohydrates</th>
-            <th>Dietary Fiber</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Object.entries(nutrientData).map(([date, nutrients]) => (
-            <tr key={date}>
-              <td>{date}</td>
-              <td>{nutrients.calories}</td>
-              <td>{nutrients.protein}</td>
-              <td>{nutrients.saturated_fat}</td>
-              <td>{nutrients.total_fat}</td>
-              <td>{nutrients.carbohydrate}</td>
-              <td>{nutrients.dietary_fiber}</td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+
+      <hr></hr>
+      <NutrientChart nutrientData={nutrientData} selectedNutrient={selectedNutrient} />
+      <hr></hr>
+      <CalendarView nutrientData={nutrientData} selectedNutrient={selectedNutrient} />
+      <hr></hr>
+      <NutrientTable nutrientData={nutrientData} selectedNutrient={selectedNutrient} />
+      <hr></hr>
+      {/* <StatCards nutrientData={nutrientData} selectedNutrient={selectedNutrient} /> */}
+      {/* <hr></hr> */}
     </Container>
   );
 };
 
 export default History;
+
+

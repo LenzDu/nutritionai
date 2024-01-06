@@ -176,8 +176,10 @@ export const DataDisplay = ({ nutritionData }) => {
       <hr></hr>
       <strong>Food Breakdown</strong>
       <FoodSummary data={data.food_summary} />
+      <hr></hr>
       <strong>Nutrients Breakdown</strong>
       <NutrientCardsContainer data={data.nutrition_breakdown} />
+      <hr></hr>
       {/* <NutritionTable data={data.nutrition_breakdown} /> */}
       <NutritionBarPlot data={data.nutrition_breakdown} />
 

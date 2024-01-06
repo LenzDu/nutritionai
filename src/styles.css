@@ -1,0 +1,90 @@
+/* styles.css */
+.padded-card {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  /* border: none; */
+  /* border-radius: 0.5rem; */
+  /* box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); */
+}
+
+.padded-card .card-header {
+  padding: 0.75rem 1.25rem;
+  background-color: #f8f8f8;
+  border: none;
+  cursor: pointer;
+}
+
+.padded-card .card-header:hover {
+  background-color: #ececec;
+}
+
+.padded-card .card-header .d-flex {
+  align-items: center; /* Align items vertically */
+  justify-content: space-between;
+}
+
+.padded-card .card-header strong {
+  font-size: 1rem;
+  color: #004085;
+}
+
+.padded-card .list-group-item {
+  font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+  /* Smaller paddings and font sizes for mobile screens */
+  .padded-card .card-header {
+    padding: 0.5rem 1rem;
+  }
+
+  .padded-card .card-header strong {
+    font-size: 0.9rem;
+  }
+
+  .padded-card .list-group-item {
+    padding: 0.5rem 1rem;
+  }
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); /* 7 columns for 7 days */
+  gap: 2px; /* Smaller gap on all screen sizes to save space */
+  padding: 4px; /* Padding around the entire grid */
+}
+
+.calendar-cell {
+  border: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; /* Added to center the content */
+  aspect-ratio: 1; /* Makes the cell a square */
+  overflow: hidden; /* In case content overflows */
+}
+
+.calendar-cell.filled {
+  background-color: #e7f4ff;
+}
+
+.calendar-cell.empty {
+  background-color: #f8f8f8;
+}
+
+.cell-date {
+  font-size: 0.75em; /* Starting with a small font size for all screens */
+  color: #666;
+  margin-bottom: 4px; /* Space between date and data */
+}
+
+.cell-data {
+  font-weight: bold;
+  color: #004085;
+  font-size: 0.85em; /* Starting with a small font size for all screens */
+}
+
+/* Responsive styling for smaller screens */
+@media (max-width: 768px) { /* Adjust this breakpoint as needed for your design */
+  /* You may not need to change anything here if the above styles are adequate for mobile */
+}

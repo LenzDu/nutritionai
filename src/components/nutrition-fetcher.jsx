@@ -73,7 +73,7 @@ const NutritionFetcher = ( { apiKey } ) => {
         <Row className="justify-content-md-center">
           <Col md={6}>
 
-            <Card>
+            <Card className='padded-card'>
               <Card.Body>
                 <Form>
                   <Form.Label>Describe Your Meal</Form.Label>

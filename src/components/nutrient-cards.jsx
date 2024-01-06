@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Accordion, useAccordionButton, Row, Col, ListGroup } from 'react-bootstrap';
+import { Card, Accordion, useAccordionButton, AccordionButton, Row, Col, ListGroup } from 'react-bootstrap';
 
 import { calculatePercentage, calculateTotalNutrients, calculateMaxContributor } from '../calculate';
 
@@ -37,11 +37,11 @@ const NutrientCard = ({ data, nutrient, title }) => {
   };
 
   return (
-    <Card>
+    <Card className='padded-card'>
       <CustomToggle eventKey={nutrient}>
         <div className="d-flex justify-content-between align-items-center">
           <div style={{ fontSize: '0.9rem' }}>
-            {title}: {amount.toFixed(0)}{nutrient !== 'calories' ? 'g' : ''} ({percentage.toFixed(0)}%)
+            <strong>{title}</strong>: {amount.toFixed(0)}{nutrient !== 'calories' ? 'g' : ''} ({percentage.toFixed(0)}%)
           </div>
           <div className="text-muted" style={{ fontSize: '0.8rem' }}>
             <strong>{maxContributor.name}</strong> contributes {maxContributorPercentage.toFixed(0)}%
@@ -55,6 +55,7 @@ const NutrientCard = ({ data, nutrient, title }) => {
   );
 };
 
+
 const NutrientCardsContainer = ({ data }) => {
 
   const nutrientTitles = {
@@ -67,18 +68,19 @@ const NutrientCardsContainer = ({ data }) => {
   };
 
   const columnsForNutrients = Object.keys(nutrientTitles).map(nutrient => (
-    <Col xs={12} sm={6} lg={4} key={nutrient}>
-      <NutrientCard
-        data={data}
-        nutrient={nutrient}
-        title={nutrientTitles[nutrient]}
-      />
-    </Col>
+    // <Col xs={12} sm={6} lg={4} key={nutrient}>
+    <NutrientCard
+      data={data}
+      nutrient={nutrient}
+      title={nutrientTitles[nutrient]}
+    />
+    // </Col>
   ));
 
   return (
     <Accordion defaultActiveKey="">
-      <Row>{columnsForNutrients}</Row>
+      {columnsForNutrients}
+      {/* <Row>{columnsForNutrients}</Row> */}
     </Accordion>
   );
 };
