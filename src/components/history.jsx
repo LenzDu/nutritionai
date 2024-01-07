@@ -163,7 +163,7 @@ const CalendarView = ({ nutrientData, selectedNutrient }) => {
 
         return (
           <div key={date} className={`calendar-cell ${cellClass}`}>
-            <span className="cell-date">{format(new Date(date), 'iii')}</span>
+            <span className="cell-date">{format(new Date(date), 'MM-dd')}</span>
             <span className="cell-data">{percentage}</span>
           </div>
         );

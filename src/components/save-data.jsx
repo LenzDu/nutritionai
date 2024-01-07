@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 
 const getLocalDateISOString = () => {
@@ -8,21 +8,49 @@ const getLocalDateISOString = () => {
   return adjustedDate.toISOString().substr(0, 10); // format to yyyy-mm-dd
 };
 
+
 const SaveDataModal = ({ show, setShow, data }) => {
-  const [selectedDate, setSelectedDate] = useState(getLocalDateISOString()); 
+  const [selectedDate, setSelectedDate] = useState(getLocalDateISOString());
   const [error, setError] = useState(null);
+  const [historyData, setHistoryData] = useState(null); // Initialize to null
 
-  if (!data) return null;
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const loadedData = JSON.parse(localStorage.getItem('history')) || { data: { nutrients: {} } };
+        setHistoryData(loadedData);
+      } catch (e) {
+        console.error('Error loading history from localStorage:', e);
+        setError('Failed to load history data.');
+      }
+    };
+    loadData();
+  }, []);
 
-  const handleConfirm = () => {
+  const handleSave = (add = false) => {
+    if (!historyData) {
+      setError('Please wait until history data is loaded before saving.');
+      return;
+    }
+
+    setError(null); // Reset previous errors
+
+    const updatedHistory = { ...historyData };
+    const currentDataForDate = updatedHistory.data.nutrients[selectedDate] || {};
+
+    // Determine the new data for the selected date
+    const newDataForDate = add
+      ? Object.keys(data).reduce((acc, nutrient) => {
+        acc[nutrient] = (currentDataForDate[nutrient] || 0) + data[nutrient];
+        return acc;
+      }, {})
+      : data;
+
+    updatedHistory.data.nutrients[selectedDate] = newDataForDate;
+
     try {
-      setError(null); // Reset previous errors
-      const existingData = JSON.parse(localStorage.getItem('history')) || { 'data': { 'nutrients': {} } };
-
-      existingData.data.nutrients[selectedDate] = data;
-
-      localStorage.setItem('history', JSON.stringify(existingData));
-      alert('Results saved!');
+      localStorage.setItem('history', JSON.stringify(updatedHistory));
+      alert(add ? 'Results added to the existing data!' : 'Results saved!');
       setShow(false);
     } catch (e) {
       setError('An error occurred while saving data.');
@@ -30,17 +58,20 @@ const SaveDataModal = ({ show, setShow, data }) => {
     }
   };
 
-  const handleClose = () => {
-    setShow(false);
-  }
+  const dataExists = !!historyData?.data.nutrients[selectedDate];
 
   return (
-    <Modal show={show} onHide={handleClose}>
+    <Modal show={show} onHide={() => { setShow(false) }}>
       <Modal.Header closeButton>
         <Modal.Title>Save Results</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {error && <Alert variant="danger">{error}</Alert>}
+        {dataExists && (
+          <Alert variant="warning">
+            The date you have selected already has data. You can choose to overwrite the existing data or add this meal's data to it.
+          </Alert>
+        )}
         <p>
           Results will be saved on your device for the day you select. You can see all results in the history page.
         </p>
@@ -56,13 +87,25 @@ const SaveDataModal = ({ show, setShow, data }) => {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="primary" onClick={handleConfirm}>
-          Confirm
-        </Button>
+        {dataExists ? (
+          <>
+            <Button variant="secondary" onClick={() => handleSave(true)} disabled={!historyData}>
+              Add
+            </Button>
+            <Button variant="primary" onClick={() => handleSave()} disabled={!historyData}>
+              Overwrite
+            </Button>
+          </>
+        ) : (
+          <Button variant="primary" onClick={() => handleSave()} disabled={!historyData}>
+            Confirm
+          </Button>
+        )}
       </Modal.Footer>
     </Modal>
   );
 };
+
 
 const SaveData = ({ data }) => {
   const [showSaveDataModal, setShowSaveDataModal] = useState(false);

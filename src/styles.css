@@ -75,13 +75,13 @@
 .cell-date {
   font-size: 0.75em; /* Starting with a small font size for all screens */
   color: #666;
-  margin-bottom: 4px; /* Space between date and data */
+  margin-bottom: 0px; /* Space between date and data */
 }
 
 .cell-data {
   font-weight: bold;
   color: #004085;
-  font-size: 0.85em; /* Starting with a small font size for all screens */
+  font-size: 0.75em; /* Starting with a small font size for all screens */
 }
 
 /* Responsive styling for smaller screens */
