@@ -7,46 +7,6 @@
   /* box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); */
 }
 
-.padded-card .card-header {
-  padding: 0.75rem 1.25rem;
-  background-color: #f8f8f8;
-  border: none;
-  cursor: pointer;
-}
-
-.padded-card .card-header:hover {
-  background-color: #ececec;
-}
-
-.padded-card .card-header .d-flex {
-  align-items: center; /* Align items vertically */
-  justify-content: space-between;
-}
-
-.padded-card .card-header strong {
-  font-size: 1rem;
-  color: #004085;
-}
-
-.padded-card .list-group-item {
-  font-size: 0.85rem;
-}
-
-@media (max-width: 768px) {
-  /* Smaller paddings and font sizes for mobile screens */
-  .padded-card .card-header {
-    padding: 0.5rem 1rem;
-  }
-
-  .padded-card .card-header strong {
-    font-size: 0.9rem;
-  }
-
-  .padded-card .list-group-item {
-    padding: 0.5rem 1rem;
-  }
-}
-
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr); /* 7 columns for 7 days */

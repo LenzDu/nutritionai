@@ -6,16 +6,17 @@ import { calculatePercentage, calculateTotalNutrients, calculateMaxContributor }
 
 const NutrientDetails = ({ data, nutrient }) => (
   <ListGroup>
-    {Object.entries(data).map(([foodName, nutrients]) => {
-      const amount = nutrients[nutrient];
-      const percentage = calculatePercentage(amount, nutrient);
-      return (
-        <div key={foodName} style={{ fontSize: '0.9rem' }}>
-          <ListGroup.Item>{`${foodName}: ${amount}g (${percentage.toFixed(2)}%)`}</ListGroup.Item>
-          {/* {`${foodName}: ${amount}g (${percentage.toFixed(2)}%)`} */}
-        </div>
-      );
-    })}
+    {Object.entries(data).sort((a, b) => b[1][nutrient] - a[1][nutrient])
+      .map(([foodName, nutrients]) => {
+        const amount = nutrients[nutrient];
+        const percentage = calculatePercentage(amount, nutrient);
+        return (
+          <div key={foodName} style={{ fontSize: '0.9rem' }}>
+            <ListGroup.Item>{`${foodName}: ${amount}g (${percentage.toFixed(2)}%)`}</ListGroup.Item>
+            {/* {`${foodName}: ${amount}g (${percentage.toFixed(2)}%)`} */}
+          </div>
+        );
+      })}
   </ListGroup>
 );
 
