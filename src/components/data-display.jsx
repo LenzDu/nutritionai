@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Form, Container, Row, Col, Card, Table } from 'react-bootstrap';
 import { Bar } from 'react-chartjs-2';
 
-import { calculatePercentage, calculateTotalNutrients } from '../calculate';
+import { calculatePercentage, calculateTotalNutrients } from '../utils/calculate';
 import NutrientCardsContainer from './nutrient-cards';
 import SaveData from './save-data'
 

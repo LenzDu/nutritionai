@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Accordion, useAccordionButton, AccordionButton, Row, Col, ListGroup } from 'react-bootstrap';
 
-import { calculatePercentage, calculateTotalNutrients, calculateMaxContributor } from '../calculate';
+import { calculatePercentage, calculateTotalNutrients, calculateMaxContributor } from '../utils/calculate';
 
 
 const NutrientDetails = ({ data, nutrient }) => (

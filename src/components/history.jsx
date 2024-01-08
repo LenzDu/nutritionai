@@ -3,9 +3,12 @@ import { Table, Card, Container, Form, Row, Col } from 'react-bootstrap';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, registerables } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
+
+import { ReactComponent as EditIcon } from '../icons/edit.svg';
+import EditDataModal from './edit-data';
 import { dailyValue } from '../reference-data';
-import { calculatePercentage } from '../calculate';
-import { subDays, format } from 'date-fns';
+import { calculatePercentage } from '../utils/calculate';
+import { subDays, format, parseISO } from 'date-fns';
 
 ChartJS.register(...registerables);
 
@@ -72,7 +75,7 @@ const NutrientChart = ({ nutrientData, selectedNutrient }) => {
 };
 
 
-const NutrientTable = ({ nutrientData, selectedNutrient }) => {
+const NutrientTable = ({ nutrientData, selectedNutrient, openEditDataModal }) => {
   const datesSorted = Object.keys(nutrientData).sort();
 
   return (
@@ -89,7 +92,7 @@ const NutrientTable = ({ nutrientData, selectedNutrient }) => {
           const amount = nutrientData[date][selectedNutrient];
           return (
             <tr key={date}>
-              <td>{date}</td>
+              <td><span style={{ cursor: 'pointer' }} onClick={() => openEditDataModal(date)}><EditIcon /></span> {date} </td>
               <td>{amount}</td>
               <td>{calculatePercentage(amount, selectedNutrient).toFixed(2)}%</td>
             </tr>
@@ -146,7 +149,7 @@ const StatCards = ({ nutrientData, selectedNutrient }) => {
   );
 };
 
-const CalendarView = ({ nutrientData, selectedNutrient }) => {
+const CalendarView = ({ nutrientData, selectedNutrient, openEditDataModal }) => {
   const startDate = subDays(new Date(), 27); // 28 days including today
   const calendarDays = Array.from({ length: 28 }).map((_, i) => {
     return format(subDays(startDate, -i), 'yyyy-MM-dd');
@@ -163,7 +166,7 @@ const CalendarView = ({ nutrientData, selectedNutrient }) => {
 
         return (
           <div key={date} className={`calendar-cell ${cellClass}`}>
-            <span className="cell-date">{format(new Date(date), 'MM-dd')}</span>
+            <span className="cell-date">{format(parseISO(date), 'MM-dd')}</span>
             <span className="cell-data">{percentage}</span>
           </div>
         );
@@ -176,6 +179,8 @@ const CalendarView = ({ nutrientData, selectedNutrient }) => {
 const History = () => {
   const [nutrientData, setNutrientData] = useState({});
   const [selectedNutrient, setSelectedNutrient] = useState('calories');
+  const [editDataModalOpen, setEditDataModalOpen] = useState(false);
+  const [editingDate, setEditingDate] = useState(null);
 
   useEffect(() => {
     // Assuming the new structure matches with the Nutrient components
@@ -193,6 +198,11 @@ const History = () => {
 
   const handleNutrientChange = (event) => {
     setSelectedNutrient(event.target.value);
+  };
+
+  const openEditDataModal = (date) => {
+    setEditingDate(date);
+    setEditDataModalOpen(true);
   };
 
   return (
@@ -217,14 +227,22 @@ const History = () => {
       </Card>
 
       <hr></hr>
-      <NutrientChart nutrientData={nutrientData} selectedNutrient={selectedNutrient} />
+      <NutrientChart nutrientData={nutrientData} selectedNutrient={selectedNutrient}/>
       <hr></hr>
-      <CalendarView nutrientData={nutrientData} selectedNutrient={selectedNutrient} />
+      <CalendarView nutrientData={nutrientData} selectedNutrient={selectedNutrient} openEditDataModal={openEditDataModal}/>
       <hr></hr>
-      <NutrientTable nutrientData={nutrientData} selectedNutrient={selectedNutrient} />
+      <NutrientTable nutrientData={nutrientData} selectedNutrient={selectedNutrient} openEditDataModal={openEditDataModal}/>
       <hr></hr>
       {/* <StatCards nutrientData={nutrientData} selectedNutrient={selectedNutrient} /> */}
       {/* <hr></hr> */}
+      <EditDataModal
+        show={editDataModalOpen}
+        setShow={setEditDataModalOpen}
+        editingDate={editingDate}
+        setEditingDate={setEditingDate}
+        nutrientData={nutrientData}
+        setNutrientData={setNutrientData}
+      />
     </Container>
   );
 };

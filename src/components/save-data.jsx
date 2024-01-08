@@ -1,16 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 
-const getLocalDateISOString = () => {
-  const now = new Date();
-  const timeOffsetInMS = now.getTimezoneOffset() * 60000; // convert offset to milliseconds
-  const adjustedDate = new Date(now - timeOffsetInMS);
-  return adjustedDate.toISOString().substr(0, 10); // format to yyyy-mm-dd
-};
-
+import { getCurrentLocalDateISOString } from '../utils/date'
 
 const SaveDataModal = ({ show, setShow, data }) => {
-  const [selectedDate, setSelectedDate] = useState(getLocalDateISOString());
+  const [selectedDate, setSelectedDate] = useState(getCurrentLocalDateISOString());
   const [error, setError] = useState(null);
   const [historyData, setHistoryData] = useState(null); // Initialize to null
 
