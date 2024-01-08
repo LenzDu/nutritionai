@@ -165,7 +165,7 @@ const CalendarView = ({ nutrientData, selectedNutrient, openEditDataModal }) => 
         const cellClass = nutrientData[date] ? 'filled' : 'empty';
 
         return (
-          <div key={date} className={`calendar-cell ${cellClass}`}>
+          <div key={date} className={`calendar-cell ${cellClass}`} onClick={() => openEditDataModal(date)}>
             <span className="cell-date">{format(parseISO(date), 'MM-dd')}</span>
             <span className="cell-data">{percentage}</span>
           </div>

@@ -2,11 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Alert, Row, Col } from 'react-bootstrap';
 
 const EditDataModal = ({ show, setShow, editingDate, setEditingDate, nutrientData, setNutrientData }) => {
-  // const [currentDate, setCurrentDate] = useState(editingDate);
   const [nutrients, setNutrients] = useState(nutrientData[editingDate] || {});
 
   useEffect(() => {
-    // setCurrentDate(editingDate);
     setNutrients(nutrientData[editingDate] || {});
   }, [editingDate, nutrientData]);
 
@@ -68,7 +66,7 @@ const EditDataModal = ({ show, setShow, editingDate, setEditingDate, nutrientDat
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>Cancel</Button>
+        {/* <Button variant="secondary" onClick={handleClose}>Cancel</Button> */}
         <Button variant="danger" onClick={handleDelete}>Remove Data</Button>
         <Button variant="primary" onClick={handleSave}>Save Changes</Button>
       </Modal.Footer>
