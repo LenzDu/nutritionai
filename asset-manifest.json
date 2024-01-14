@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/nutritionai/static/css/main.859adbca.css",
-    "main.js": "/nutritionai/static/js/main.76ca5a25.js",
+    "main.js": "/nutritionai/static/js/main.e86ebf84.js",
     "static/js/787.232c406f.chunk.js": "/nutritionai/static/js/787.232c406f.chunk.js",
     "index.html": "/nutritionai/index.html",
     "static/media/edit.svg": "/nutritionai/static/media/edit.df6036a28cf5d56b4e4aa78def111a26.svg",
     "main.859adbca.css.map": "/nutritionai/static/css/main.859adbca.css.map",
-    "main.76ca5a25.js.map": "/nutritionai/static/js/main.76ca5a25.js.map",
+    "main.e86ebf84.js.map": "/nutritionai/static/js/main.e86ebf84.js.map",
     "787.232c406f.chunk.js.map": "/nutritionai/static/js/787.232c406f.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.859adbca.css",
-    "static/js/main.76ca5a25.js"
+    "static/js/main.e86ebf84.js"
   ]
 }
