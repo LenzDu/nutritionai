@@ -6,14 +6,15 @@ import annotationPlugin from 'chartjs-plugin-annotation';
 
 import { ReactComponent as EditIcon } from '../icons/edit.svg';
 import EditDataModal from './edit-data';
-import { dailyValue } from '../reference-data';
 import { calculatePercentage } from '../utils/calculate';
 import { subDays, format, parseISO } from 'date-fns';
+import { useDailyValueStore } from '../stores';
 
 ChartJS.register(...registerables);
 
 const NutrientChart = ({ nutrientData, selectedNutrient }) => {
   const datesSorted = Object.keys(nutrientData).sort();
+  const dailyValue = useDailyValueStore((state) => state.value);
 
   const chartData = {
     labels: datesSorted,
@@ -77,6 +78,7 @@ const NutrientChart = ({ nutrientData, selectedNutrient }) => {
 
 const NutrientTable = ({ nutrientData, selectedNutrient, openEditDataModal }) => {
   const datesSorted = Object.keys(nutrientData).sort();
+  const dailyValue = useDailyValueStore((state) => state.value);
 
   return (
     <Table striped bordered hover className="mt-4">
@@ -94,7 +96,7 @@ const NutrientTable = ({ nutrientData, selectedNutrient, openEditDataModal }) =>
             <tr key={date}>
               <td><span style={{ cursor: 'pointer' }} onClick={() => openEditDataModal(date)}><EditIcon /></span> {date} </td>
               <td>{amount}</td>
-              <td>{calculatePercentage(amount, selectedNutrient).toFixed(2)}%</td>
+              <td>{calculatePercentage(dailyValue, amount, selectedNutrient).toFixed(2)}%</td>
             </tr>
           );
         })}
@@ -104,62 +106,63 @@ const NutrientTable = ({ nutrientData, selectedNutrient, openEditDataModal }) =>
 };
 
 
-const StatCards = ({ nutrientData, selectedNutrient }) => {
-  // Assuming that the sortedDates has already been created in the parent component, pass it via props.
-  // For simplicity, otherwise you should sort the dates again here.
+// const StatCards = ({ nutrientData, selectedNutrient }) => {
+//   // Assuming that the sortedDates has already been created in the parent component, pass it via props.
+//   // For simplicity, otherwise you should sort the dates again here.
 
-  // Get the dates for the last 7 days and the 7 days before that
-  const sortedDates = Object.keys(nutrientData).sort();
-  const current7Days = sortedDates.slice(-7); // Last 7 days
-  const previous7Days = sortedDates.slice(-14, -7); // 7 days before the last 7 days
+//   // Get the dates for the last 7 days and the 7 days before that
+//   const sortedDates = Object.keys(nutrientData).sort();
+//   const current7Days = sortedDates.slice(-7); // Last 7 days
+//   const previous7Days = sortedDates.slice(-14, -7); // 7 days before the last 7 days
 
-  const sum = (values) => values.reduce((a, b) => a + b, 0);
+//   const sum = (values) => values.reduce((a, b) => a + b, 0);
 
-  const getAverage = (dates) => {
-    const sumOfNutrient = sum(dates.map(date => nutrientData[date][selectedNutrient]));
-    return sumOfNutrient / dates.length;
-  };
+//   const getAverage = (dates) => {
+//     const sumOfNutrient = sum(dates.map(date => nutrientData[date][selectedNutrient]));
+//     return sumOfNutrient / dates.length;
+//   };
 
-  const averageCurrent = getAverage(current7Days);
-  const averagePrevious = getAverage(previous7Days);
+//   const averageCurrent = getAverage(current7Days);
+//   const averagePrevious = getAverage(previous7Days);
 
-  const percentageIncrease =
-    averagePrevious === 0 ? 0 : (((averageCurrent - averagePrevious) / averagePrevious) * 100).toFixed(2);
+//   const percentageIncrease =
+//     averagePrevious === 0 ? 0 : (((averageCurrent - averagePrevious) / averagePrevious) * 100).toFixed(2);
 
-  return (
-    <div className="stat-cards">
-      <Card bsPrefix="metric-card">
-        <Card.Body>
-          <Card.Title>Average for Current 7 Days</Card.Title>
-          <Card.Text>
-            {averageCurrent.toFixed(2)} ( {calculatePercentage(averageCurrent, selectedNutrient).toFixed(1)}% of daily value)
-          </Card.Text>
-        </Card.Body>
-      </Card>
-      <Card bsPrefix="metric-card">
-        <Card.Body>
-          <Card.Title>% Increase/Decrease</Card.Title>
-          <Card.Text>
-            {percentageIncrease}%
-          </Card.Text>
-        </Card.Body>
-      </Card>
-      {/* More cards for other stats can be added here */}
-    </div>
-  );
-};
+//   return (
+//     <div className="stat-cards">
+//       <Card bsPrefix="metric-card">
+//         <Card.Body>
+//           <Card.Title>Average for Current 7 Days</Card.Title>
+//           <Card.Text>
+//             {averageCurrent.toFixed(2)} ( {calculatePercentage(averageCurrent, selectedNutrient).toFixed(1)}% of daily value)
+//           </Card.Text>
+//         </Card.Body>
+//       </Card>
+//       <Card bsPrefix="metric-card">
+//         <Card.Body>
+//           <Card.Title>% Increase/Decrease</Card.Title>
+//           <Card.Text>
+//             {percentageIncrease}%
+//           </Card.Text>
+//         </Card.Body>
+//       </Card>
+//       {/* More cards for other stats can be added here */}
+//     </div>
+//   );
+// };
 
 const CalendarView = ({ nutrientData, selectedNutrient, openEditDataModal }) => {
   const startDate = subDays(new Date(), 27); // 28 days including today
   const calendarDays = Array.from({ length: 28 }).map((_, i) => {
     return format(subDays(startDate, -i), 'yyyy-MM-dd');
   });
+  const dailyValue = useDailyValueStore((state) => state.value);
 
   return (
     <div className="calendar-grid">
       {calendarDays.map(date => {
         const percentage = nutrientData[date] ?
-          `${calculatePercentage(nutrientData[date][selectedNutrient], selectedNutrient).toFixed(1)}%` :
+          `${calculatePercentage(dailyValue, nutrientData[date][selectedNutrient], selectedNutrient).toFixed(1)}%` :
           '';
 
         const cellClass = nutrientData[date] ? 'filled' : 'empty';

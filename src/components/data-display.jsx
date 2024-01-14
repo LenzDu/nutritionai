@@ -1,10 +1,11 @@
 import React from 'react';
-import { Card, Table } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 import { Bar } from 'react-chartjs-2';
 
 import { calculatePercentage, calculateTotalNutrients } from '../utils/calculate';
 import NutrientCardsContainer from './nutrient-cards';
 import SaveData from './save-data'
+import { useDailyValueStore } from '../stores';
 
 import {
   Chart as ChartJS,
@@ -27,70 +28,9 @@ ChartJS.register(
 );
 
 
-const NutritionTable = ({ data }) => {
-  const firstFoodItemKey = Object.keys(data).find(key => key !== 'total');
-  const nutritionTypes = firstFoodItemKey ? Object.keys(data[firstFoodItemKey]) : [];
-
-  const tableHeader = (
-    <thead>
-      <tr>
-        <th>Food</th>
-        {nutritionTypes.map((type) => (
-          <th key={type}>
-            {type.replace(/_/g, ' ')} {type !== 'calories' ? '(g)' : ''}
-          </th>
-        ))}
-      </tr>
-    </thead>
-  );
-
-  // Render one row of food data with percentage calculations
-  const renderTableRow = (foodName, nutrients) => {
-    return (
-      <tr key={foodName}>
-        <td><strong>{foodName}</strong></td>
-        {nutritionTypes.map((type) => {
-          const amount = nutrients[type] || 0;
-          const percentage = calculatePercentage(amount, type);
-          return (
-            <td key={type}>
-              {amount} ({percentage.toFixed(0)}%)
-            </td>
-          );
-        })}
-      </tr>
-    );
-  };
-
-  // Function to calculate the total nutrients and render the total row
-  const renderTotalRow = () => {
-    const totals = calculateTotalNutrients(data);
-    return renderTableRow('Total', totals);
-  };
-
-  const foodNames = Object.keys(data).filter(key => key !== 'total');
-  const tableBody = (
-    <tbody>
-      {foodNames.map((foodName) => renderTableRow(foodName, data[foodName]))}
-      {renderTotalRow()}
-    </tbody>
-  );
-
-  // Style definitions for the compact table and smaller fonts
-  const tableStyle = {
-    fontSize: '0.85rem', // Adjust font size as needed for smaller text
-  };
-
-  return (
-    <Table responsive striped bordered hover size="sm" style={tableStyle}>
-      {tableHeader}
-      {tableBody}
-    </Table>
-  );
-};
-
 const NutritionBarPlot = ({ data }) => {
   const foodItems = Object.keys(data);
+  const dailyValue = useDailyValueStore((state) => state.value);
 
   const datasets = foodItems.map((item, index) => {
     const color = `hsl(${index * 360 / foodItems.length}, 70%, 60%)`;
@@ -102,7 +42,7 @@ const NutritionBarPlot = ({ data }) => {
 
     for (let nutrient in data[item]) {
       const amount = data[item][nutrient];
-      const percentage = calculatePercentage(amount, nutrient);
+      const percentage = calculatePercentage(dailyValue, amount, nutrient);
       dataset.data.push(percentage);
     }
 

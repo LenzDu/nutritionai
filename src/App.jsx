@@ -4,6 +4,7 @@ import { Container } from 'react-bootstrap';
 
 import NavbarComponent from './components/nav-bar';
 import ApiPopupModal from './components/api-modal';
+import DailyValueModal from './components/daily-value-modal';
 import History from './components/history';
 import NutritionFetcher from './components/nutrition-fetcher';
 
@@ -20,6 +21,7 @@ const App = () => {
         showApiModal={showApiModal}
         setShowApiModal={setShowApiModal}
       />
+      <DailyValueModal />
 
       <Routes>
         <Route path="/" element={<NutritionFetcher apiKey={apiKey} />} />

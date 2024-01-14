@@ -1,7 +1,5 @@
-import { dailyValue } from "../reference-data";
-
 // Define a function to calculate the percentage
-export const calculatePercentage = (amount, nutrient) => {
+export const calculatePercentage = (dailyValue, amount, nutrient) => {
   const recommendedAmount = dailyValue[nutrient];
   return (amount / recommendedAmount) * 100;
 };

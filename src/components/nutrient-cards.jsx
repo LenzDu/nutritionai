@@ -2,31 +2,37 @@ import React, { useState } from 'react';
 import { Card, Accordion, useAccordionButton, AccordionButton, Row, Col, ListGroup } from 'react-bootstrap';
 
 import { calculatePercentage, calculateTotalNutrients, calculateMaxContributor } from '../utils/calculate';
+import { useDailyValueStore } from '../stores';
 
 
-const NutrientDetails = ({ data, nutrient }) => (
-  <ListGroup>
-    {Object.entries(data).sort((a, b) => b[1][nutrient] - a[1][nutrient])
-      .map(([foodName, nutrients]) => {
-        const amount = nutrients[nutrient];
-        const percentage = calculatePercentage(amount, nutrient);
-        return (
-          <div key={foodName} style={{ fontSize: '0.9rem' }}>
-            <ListGroup.Item>{`${foodName}: ${amount}g (${percentage.toFixed(2)}%)`}</ListGroup.Item>
-            {/* {`${foodName}: ${amount}g (${percentage.toFixed(2)}%)`} */}
-          </div>
-        );
-      })}
-  </ListGroup>
-);
+const NutrientDetails = ({ data, nutrient }) => {
+  const dailyValue = useDailyValueStore((state) => state.value);
+
+  return (
+    <ListGroup>
+      {Object.entries(data).sort((a, b) => b[1][nutrient] - a[1][nutrient])
+        .map(([foodName, nutrients]) => {
+          const amount = nutrients[nutrient];
+          const percentage = calculatePercentage(dailyValue, amount, nutrient);
+          return (
+            <div key={foodName} style={{ fontSize: '0.9rem' }}>
+              <ListGroup.Item>{`${foodName}: ${amount}g (${percentage.toFixed(2)}%)`}</ListGroup.Item>
+              {/* {`${foodName}: ${amount}g (${percentage.toFixed(2)}%)`} */}
+            </div>
+          );
+        })}
+    </ListGroup>
+  )
+};
 
 const NutrientCard = ({ data, nutrient, title }) => {
   const [expanded, setExpanded] = useState(false);
+  const dailyValue = useDailyValueStore((state) => state.value);
   const total = calculateTotalNutrients(data);
   const amount = total[nutrient];
-  const percentage = calculatePercentage(amount, nutrient);
+  const percentage = calculatePercentage(dailyValue, amount, nutrient);
   const maxContributor = calculateMaxContributor(data, nutrient);
-  const maxContributorPercentage = calculatePercentage(maxContributor.amount, nutrient);
+  const maxContributorPercentage = calculatePercentage(dailyValue, maxContributor.amount, nutrient);
 
   const CustomToggle = ({ children, eventKey }) => {
     const decoratedOnClick = useAccordionButton(eventKey, () => setExpanded(!expanded));

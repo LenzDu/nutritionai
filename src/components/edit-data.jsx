@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Button, Form, Alert, Row, Col } from 'react-bootstrap';
+import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 
 const EditDataModal = ({ show, setShow, editingDate, setEditingDate, nutrientData, setNutrientData }) => {
   const [nutrients, setNutrients] = useState(nutrientData[editingDate] || {});

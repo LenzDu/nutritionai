@@ -1,10 +1,17 @@
 import React from 'react';
-import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
+import { Navbar, Nav, Container } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
+
+import { useDailyValueStore } from '../stores';
 
 function NavbarComponent({ setShowApiModal }) {
   const handleAPIClick = () => {
     setShowApiModal(true);
+  };
+
+  const setShowDailyValueModal = useDailyValueStore((state) => state.setShowModal);
+  const handleDailyValueClick = () => {
+    setShowDailyValueModal(true);
   };
 
   return (
@@ -17,6 +24,7 @@ function NavbarComponent({ setShowApiModal }) {
             <Nav.Link as={NavLink} to="/" eventKey='1'>Home</Nav.Link>
             <Nav.Link as={NavLink} to="/history" eventKey='2'>History</Nav.Link>
             <Nav.Link eventKey='3' onClick={handleAPIClick}>API Key</Nav.Link>
+            <Nav.Link eventKey='4' onClick={handleDailyValueClick}>Daily Value</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>
