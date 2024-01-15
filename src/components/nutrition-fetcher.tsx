@@ -36,7 +36,7 @@ const NutritionFetcher = () => {
 
     try {
       const messages = conversation.length === 0 ? getInitialPrompt(description) : getFollowUpPrompt(conversation, description);
-      const { message, usage } = await fetchNutritionData({ apiKey, messages });
+      const { message, usage } = await fetchNutritionData(apiKey, messages);
       setLoading(false);
 
       setSessionState('conversation', [

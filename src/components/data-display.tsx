@@ -9,6 +9,8 @@ import { useDailyValueStore } from '../stores';
 
 import {
   Chart as ChartJS,
+  ChartData,
+  ChartOptions,
   CategoryScale,
   LinearScale,
   BarElement,
@@ -27,6 +29,11 @@ ChartJS.register(
   Legend
 );
 
+interface NutritionData {
+  [item: string]: {
+    [nutrient: string]: number;
+  };
+}
 
 const NutritionBarPlot = ({ data }) => {
   const foodItems = Object.keys(data);
@@ -36,7 +43,7 @@ const NutritionBarPlot = ({ data }) => {
     const color = `hsl(${index * 360 / foodItems.length}, 70%, 60%)`;
     const dataset = {
       label: item,
-      data: [],
+      data: [] as number[],
       backgroundColor: color,
     };
 
@@ -51,12 +58,12 @@ const NutritionBarPlot = ({ data }) => {
 
   const nutrientTypes = Object.keys(data[foodItems[0]]);
 
-  const chartData = {
+  const chartData: ChartData<'bar', number[], string> = {
     labels: nutrientTypes,
     datasets: datasets,
   };
 
-  const chartOptions = {
+  const chartOptions: ChartOptions<'bar'> = {
     indexAxis: 'y',
     plugins: {
       title: {
@@ -74,34 +81,36 @@ const NutritionBarPlot = ({ data }) => {
       },
       y: {
         stacked: true,
-        ticks: {
-          beginAtZero: true,
-          // suggestedMax: 100,
-        }
+        min: 0,
       }
     },
     responsive: true,
     maintainAspectRatio: false,
   };
 
-  return <div style={{ height: '40vh', minHeight: '200px' }}>
-    <Bar data={chartData} options={chartOptions} />
-  </div>
+  return (
+    <div style={{ height: '40vh', minHeight: '200px' }}>
+      <Bar data={chartData} options={chartOptions} />
+    </div>
+  );
 };
 
-const FoodSummary = ({ data }) => {
+interface FoodSummaryProps {
+  // Assuming `data` is an object with string keys and string values
+  data: Record<string, string>;
+};
+
+const FoodSummary: React.FC<FoodSummaryProps> = ({ data }) => {
   return (
-    <>
-      <div className="compact-list">
-        <ul>
-          {Object.entries(data).map(([foodItem, description], index) => (
-            <li key={index}>
-              <strong>{foodItem}:</strong> {description}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </>
+    <div className="compact-list">
+      <ul>
+        {Object.entries(data).map(([foodItem, description], index) => (
+          <li key={index}>
+            <strong>{foodItem}:</strong> {description}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 };
 

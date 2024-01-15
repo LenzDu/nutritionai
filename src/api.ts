@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 
-export const getInitialPrompt = (description) => {
+export const getInitialPrompt = (description: string) => {
   return [
     {
       role: "system", content: `
@@ -42,7 +42,7 @@ export const getInitialPrompt = (description) => {
 };
 
 
-export const getFollowUpPrompt = (conversation, description) => {
+export const getFollowUpPrompt = (conversation, description: string) => {
   return [
     ...conversation,
     {
@@ -56,7 +56,7 @@ export const getFollowUpPrompt = (conversation, description) => {
   ];
 };
 
-export const fetchNutritionData = async ({ apiKey, messages }) => {
+export const fetchNutritionData = async (apiKey: string, messages) => {
   // uncomment to mock openai api call to test other components
   // return {
   //   message: `{

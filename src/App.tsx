@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import NavbarComponent from './components/nav-bar';
-import ApiPopupModal from './components/api-modal.tsx';
+import ApiPopupModal from './components/api-modal';
 import DailyValueModal from './components/daily-value-modal';
 import History from './components/history';
 import NutritionFetcher from './components/nutrition-fetcher';

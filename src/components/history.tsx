@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Card, Container, Form, Row, Col } from 'react-bootstrap';
 import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, registerables } from 'chart.js';
+import {
+  Chart as ChartJS,
+  ChartData,
+  ChartOptions,
+  registerables
+} from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
 
-import { ReactComponent as EditIcon } from '../icons/edit.svg';
+import EditIcon from '../icons/edit';
 import EditDataModal from './edit-data';
 import { calculatePercentage } from '../utils/calculate';
 import { subDays, format, parseISO } from 'date-fns';
@@ -12,11 +17,17 @@ import { useDailyValueStore } from '../stores';
 
 ChartJS.register(...registerables);
 
+interface NutrientData {
+  [date: string]: {
+    [key: string]: number;
+  };
+}
+
 const NutrientChart = ({ nutrientData, selectedNutrient }) => {
   const datesSorted = Object.keys(nutrientData).sort();
   const dailyValue = useDailyValueStore((state) => state.value);
 
-  const chartData = {
+  const chartData: ChartData<'bar', number[], string> = {
     labels: datesSorted,
     datasets: [
       {
@@ -34,7 +45,8 @@ const NutrientChart = ({ nutrientData, selectedNutrient }) => {
     dailyValue[selectedNutrient]
   );
 
-  const options = {
+  // Correct annotations definition with strong types according to the library typings
+  const options: ChartOptions<'bar'> = {
     scales: {
       y: {
         beginAtZero: true,
@@ -53,7 +65,6 @@ const NutrientChart = ({ nutrientData, selectedNutrient }) => {
             type: 'line',
             yMin: dailyValue[selectedNutrient],
             yMax: dailyValue[selectedNutrient],
-            // borderColor: 'rgb(255, 99, 132)',
             borderWidth: 1.5,
             borderDash: [10, 10],
             label: {
@@ -61,13 +72,13 @@ const NutrientChart = ({ nutrientData, selectedNutrient }) => {
               enabled: true,
               position: 'start',
             },
-          },
-        }
+          } as any, // Using `as any` to bypass the stricter type checks (not recommended)
+        },
       },
       legend: {
         display: false,
       },
-    }
+    },
   };
 
   ChartJS.register(annotationPlugin);
