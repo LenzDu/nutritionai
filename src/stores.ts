@@ -45,7 +45,7 @@ export const useApiPopupStore = create<ApiPopupState>()(
       setShowApiModal: (show: boolean) => set({ showApiModal: show }),
     }),
     {
-      name: 'api-popup-store',
+      name: 'api-store',
     }
   )
 );
