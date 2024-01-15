@@ -16,7 +16,7 @@ const NutrientDetails = ({ data, nutrient }) => {
           const percentage = calculatePercentage(dailyValue, amount, nutrient);
           return (
             <div key={foodName} style={{ fontSize: '0.9rem' }}>
-              <ListGroup.Item>{`${foodName}: ${amount}g (${percentage.toFixed(2)}%)`}</ListGroup.Item>
+              <ListGroup.Item>{`${foodName}: ${amount}${nutrient !== 'calories' ? 'g' : ''} (${percentage.toFixed(2)}%)`}</ListGroup.Item>
               {/* {`${foodName}: ${amount}g (${percentage.toFixed(2)}%)`} */}
             </div>
           );
