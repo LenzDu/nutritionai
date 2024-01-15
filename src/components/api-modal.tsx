@@ -1,17 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
+import { useApiPopupStore } from '../stores'; // update the path to your Zustand store
 
-function ApiPopupModal({ apiKey, setApiKey, showApiModal, setShowApiModal }) {
+const ApiPopupModal = () => {
+  const { apiKey, setApiKey, showApiModal, setShowApiModal } = useApiPopupStore();
+  const [localApiKey, setLocalApiKey] = useState(apiKey);
+
   const handleSave = () => {
-    if (apiKey) {
-      localStorage.setItem('apiKey', apiKey);
-    }
+    setApiKey(localApiKey);
     setShowApiModal(false);
   };
 
   const handleCancel = () => {
-    // If canceling, reset the API key to the current value in local storage
-    setApiKey(localStorage.getItem('apiKey') || '');
+    // Reset to the persisted apiKey state
+    setLocalApiKey(apiKey);
     setShowApiModal(false);
   };
 
@@ -26,8 +28,8 @@ function ApiPopupModal({ apiKey, setApiKey, showApiModal, setShowApiModal }) {
           <Form.Control
             type="text"
             placeholder="Enter API Key"
-            value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
+            value={localApiKey}
+            onChange={(e) => setLocalApiKey(e.target.value)}
           />
           <Form.Text className="text-muted">
             This API key is only stored locally in your browser and
@@ -43,6 +45,6 @@ function ApiPopupModal({ apiKey, setApiKey, showApiModal, setShowApiModal }) {
       </Modal.Footer>
     </Modal>
   );
-}
+};
 
 export default ApiPopupModal;

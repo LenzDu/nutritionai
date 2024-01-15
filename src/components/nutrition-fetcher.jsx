@@ -3,6 +3,7 @@ import { Button, Form, Container, Row, Col, Card } from 'react-bootstrap';
 
 import { fetchNutritionData, getInitialPrompt, getFollowUpPrompt, calcualteCost } from '../api';
 import { DataDisplay, ErrorDisplay } from './data-display';
+import { useApiPopupStore } from '../stores';
 
 const setSessionState = (key, value, setter) => {
   setter(value)
@@ -14,13 +15,15 @@ const getSessionState = (key) => {
   return JSON.parse(data)
 };
 
-const NutritionFetcher = ( { apiKey } ) => {
+const NutritionFetcher = () => {
   const [description, setDescription] = useState(getSessionState('description') || '');
   const [cost, setCost] = useState(getSessionState('cost') || 0);
 
   const [conversation, setConversation] = useState(getSessionState('conversation') || []);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const apiKey = useApiPopupStore((state) => (state.apiKey));
 
   const handleSubmit = async () => {
     if (!apiKey || !description) {

@@ -1,30 +1,21 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Container } from 'react-bootstrap';
 
 import NavbarComponent from './components/nav-bar';
-import ApiPopupModal from './components/api-modal';
+import ApiPopupModal from './components/api-modal.tsx';
 import DailyValueModal from './components/daily-value-modal';
 import History from './components/history';
 import NutritionFetcher from './components/nutrition-fetcher';
 
 const App = () => {
-  const [apiKey, setApiKey] = useState(localStorage.getItem('apiKey') || '');
-  const [showApiModal, setShowApiModal] = useState(!localStorage.getItem('apiKey'));
-
   return (
     <Router basename={process.env.PUBLIC_URL}>
-      <NavbarComponent setShowApiModal={setShowApiModal} />
-      <ApiPopupModal
-        apiKey={apiKey}
-        setApiKey={setApiKey}
-        showApiModal={showApiModal}
-        setShowApiModal={setShowApiModal}
-      />
+      <NavbarComponent />
+      <ApiPopupModal />
       <DailyValueModal />
 
       <Routes>
-        <Route path="/" element={<NutritionFetcher apiKey={apiKey} />} />
+        <Route path="/" element={<NutritionFetcher />} />
         <Route path="/history" element={<History />} />
       </Routes>
     </Router>

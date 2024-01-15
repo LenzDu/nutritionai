@@ -2,9 +2,10 @@ import React from 'react';
 import { Navbar, Nav, Container } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
 
-import { useDailyValueStore } from '../stores';
+import { useDailyValueStore, useApiPopupStore } from '../stores';
 
-function NavbarComponent({ setShowApiModal }) {
+function NavbarComponent() {
+  const setShowApiModal = useApiPopupStore((state) => state.setShowApiModal);
   const handleAPIClick = () => {
     setShowApiModal(true);
   };
