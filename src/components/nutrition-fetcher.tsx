@@ -62,7 +62,7 @@ const NutritionFetcher = () => {
   const renderConversation = () => {
     return conversation.filter((item) => item?.role === 'user').map((entry, index) => (
       <Card key={index} className="mb-2">
-        <Card.Body>
+        <Card.Body className="py-2">
           <Card.Text>{entry.content}</Card.Text>
         </Card.Body>
       </Card>
@@ -76,7 +76,7 @@ const NutritionFetcher = () => {
         <Row className="justify-content-md-center">
           <Col md={6}>
 
-            <Card className='padded-card'>
+            <Card className='my-2'>
               <Card.Body>
                 <Form>
                   <Form.Label>Describe Your Meal</Form.Label>

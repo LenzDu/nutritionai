@@ -44,7 +44,7 @@ const NutrientCard = ({ data, nutrient, title }) => {
   };
 
   return (
-    <Card className='padded-card'>
+    <Card className='my-2'>
       <CustomToggle eventKey={nutrient}>
         <div className="d-flex justify-content-between align-items-center">
           <div style={{ fontSize: '0.9rem' }}>

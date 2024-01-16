@@ -133,6 +133,7 @@ export const DataDisplay = ({ nutritionData }) => {
       <NutritionBarPlot data={data.nutrition_breakdown} />
 
       <SaveData data={totals} />
+      <br></br>
     </>
   );
 };
